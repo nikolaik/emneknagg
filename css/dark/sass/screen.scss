@@ -1,0 +1,54 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+
+@import "compass/reset";
+@import "compass_twitter_bootstrap";
+@import "compass_twitter_bootstrap_responsive";
+
+body {
+    margin: 15px;
+    font-face:'Open Sans',Arial,sans;
+    font-size: 40px;
+    font-weight: normal;
+    color:#fff;
+    background-color: #222222;
+
+    #header {
+        font-weight: 700;
+        border-bottom: 1px solid #fff;
+        padding-bottom: 5px;
+
+        #hashtag {
+        }
+        #clock {
+            text-align: right;
+            font-size: 30px;
+        }
+        img {
+            position: relative;
+            bottom: 4px;
+        }
+    }
+    #container {
+        font-size: 20px;
+
+        .tweet {
+            background-color: #292929; 
+            margin-top:10px;
+            margin-bottom:10px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            line-height: 1.2em;
+
+            img {
+                width: 48px;
+                height: 48px;
+            }
+        }
+    }
+    #footer {
+    }
+}
+
