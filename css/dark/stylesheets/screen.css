@@ -5541,6 +5541,7 @@ a.label:hover, a.badge:hover {
 }
 body {
   margin: 15px;
+  margin-top: 25px;
   font-family: 'Open Sans',Arial,sans;
   font-size: 50px;
   font-weight: 700;
@@ -5568,9 +5569,7 @@ body #container #content .tweet {
   background-color: #292929;
   margin-top: 10px;
   margin-bottom: 10px;
-  padding-top: 10px;
-  padding-left: 10px;
-  padding-bottom: 10px;
+  padding: 10px;
   line-height: 1.2em;
 }
 body #container #content .tweet .search-term-highlight {
