@@ -5541,37 +5541,41 @@ a.label:hover, a.badge:hover {
 }
 body {
   margin: 15px;
-  font-face: 'Open Sans',Arial,sans;
-  font-size: 40px;
-  font-weight: normal;
+  font-family: 'Open Sans',Arial,sans;
+  font-size: 50px;
+  font-weight: 700;
   color: #fff;
+  text-shadow: black 1px 1px 0;
   background-color: #222222;
 }
 body #header {
   font-weight: 700;
   border-bottom: 1px solid #fff;
-  padding-bottom: 5px;
+  padding-bottom: 10px;
 }
 body #header #clock {
   text-align: right;
-  font-size: 30px;
+  font-size: 0.6em;
 }
 body #header img {
   position: relative;
-  bottom: 4px;
+  bottom: 5px;
 }
-body #container {
-  font-size: 20px;
+body #container #content {
+  font-size: 0.4em;
 }
-body #container .tweet {
+body #container #content .tweet {
   background-color: #292929;
   margin-top: 10px;
   margin-bottom: 10px;
   padding-top: 10px;
+  padding-left: 10px;
   padding-bottom: 10px;
   line-height: 1.2em;
 }
-body #container .tweet img {
-  width: 48px;
-  height: 48px;
+body #container #content .tweet .search-term-highlight {
+  color: #ac2314;
+}
+body #container #content .tweet .when {
+  color: #3dac14;
 }

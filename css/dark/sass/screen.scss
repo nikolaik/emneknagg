@@ -4,51 +4,59 @@
  * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
 
 @import "compass/reset";
+@import "compass/css3/text-shadow";
 @import "compass_twitter_bootstrap";
 @import "compass_twitter_bootstrap_responsive";
 
+
 body {
     margin: 15px;
-    font-face:'Open Sans',Arial,sans;
-    font-size: 40px;
-    font-weight: normal;
+    font-family: 'Open Sans',Arial,sans;
+    font-size: 50px;
+    font-weight: 700;
     color:#fff;
+    @include single-text-shadow(#000, 1px, 1px, 0);
     background-color: #222222;
 
     #header {
         font-weight: 700;
         border-bottom: 1px solid #fff;
-        padding-bottom: 5px;
+        padding-bottom: 10px;
 
-        #hashtag {
+        #search-term {
         }
         #clock {
             text-align: right;
-            font-size: 30px;
+            font-size: 0.6em;
         }
         img {
             position: relative;
-            bottom: 4px;
+            bottom: 5px;
         }
     }
     #container {
-        font-size: 20px;
+        #content {
+            font-size: 0.4em;
 
-        .tweet {
-            background-color: #292929; 
-            margin-top:10px;
-            margin-bottom:10px;
-            padding-top: 10px;
-            padding-bottom: 10px;
-            line-height: 1.2em;
+            .tweet {
+                background-color: #292929; 
+                margin-top:10px;
+                margin-bottom:10px;
+                padding-top: 10px;
+                padding-left: 10px;
+                padding-bottom: 10px;
+                line-height: 1.2em;
 
-            img {
-                width: 48px;
-                height: 48px;
+                .search-term-highlight {
+                    color: #ac2314;
+                }
+                .when {
+                    color: #3dac14;
+                }
             }
         }
-    }
-    #footer {
+        #footer {
+        }
     }
 }
 
