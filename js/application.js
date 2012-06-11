@@ -54,9 +54,9 @@ function format_tweet(result, options) {
         result: result,
         text: format_text(result.text, options.search_term),
         rel_when: rel_when,
-        retweet_url: 'http://twitter.com/intent/retweet?tweet_id=' + result.id,
-        reply_url: 'http://twitter.com/intent/tweet?in_reply_to=' + result.id,
-        tweet_url: 'https://twitter.com/' + result.from_user + '/status/' + result.id,
+        retweet_url: 'http://twitter.com/intent/retweet?tweet_id=' + result.id_str,
+        reply_url: 'http://twitter.com/intent/tweet?in_reply_to=' + result.id_str,
+        tweet_url: 'https://twitter.com/' + result.from_user + '/status/' + result.id_str,
         profile_pic_url: 'https://api.twitter.com/1/users/profile_image?screen_name=' + result.from_user + '&size=bigger',
     };
 
@@ -108,7 +108,7 @@ function urlize( text ) {
 }
 
 function highlight_term( text, term ) {
-    var re = new RegExp(term);
+    var re = new RegExp(term, "i");
     list = re.exec(text);
     if ( list ) {
         for ( i = 0; i < list.length; i++ ) {
@@ -121,7 +121,7 @@ function highlight_term( text, term ) {
 $(document).ready(function(){
     /* Define options */
     var options = {
-        search_term: '#studio2012',
+        search_term: 'Charlie Sheen',
         search_term_selector: '#search-term',
         feed_selector: '#twitter_feed',
         poll_interval: 10,
