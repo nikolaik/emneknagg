@@ -13,7 +13,7 @@ body {
     margin: 15px;
     margin-top: 25px;
     font-family: 'Open Sans',Arial,sans;
-    font-size: 50px;
+    font-size: 70px;
     font-weight: 700;
     color:#fff;
     @include single-text-shadow(#000, 1px, 1px, 0);
@@ -21,14 +21,17 @@ body {
 
     #header {
         font-weight: 700;
-        border-bottom: 1px solid #fff;
-        padding-bottom: 10px;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+        border-bottom: #fff 1px solid;
+        line-height: 1em;
 
         #search-term {
         }
         #clock {
             text-align: right;
-            font-size: 0.6em;
+            font-size: 0.4em;
+            vertical-align: bottom;
         }
         img {
             position: relative;
@@ -43,7 +46,7 @@ body {
                 background-color: #292929; 
                 margin-top:10px;
                 margin-bottom:10px;
-                padding: 10px;
+                padding: 15px;
                 line-height: 1.2em;
 
                 .search-term-highlight {

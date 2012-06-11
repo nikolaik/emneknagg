@@ -2,30 +2,34 @@ function search_twitter(options) {
     var search = 'http://search.twitter.com/search.json?q=' + escape(options.search_term) + '&result_type=recent&callback=?';
     /* Twitter search */
     /* TODO 
-     *  - linkify URLs 
-     *  - color our own search-term.
+     *  - linkify hashtags and @usernames
      */
 
     $.getJSON(search, function(query) {
-        $.each(query.results, function(i) {
-            var result = query.results[i];
+        var results = query.results;
 
-            var tweets = $(".tweet");
-            var tweet_ids = Array();
-            for(var i=0; i<tweets.length; i++) {
-                tweet_ids.push(tweets[i].id);
-            }
+        var tweets = $(".tweet");
+        var tweet_ids = Array();
+        for(var i=0; i<tweets.length; i++) {
+            tweet_ids.push(tweets[i].id);
+        }
 
-            /* new tweet? */
-            if( $.inArray(result.id_str, tweet_ids) == -1 ) {
-                /* ...then append */
-                append_tweet(result, options);
-            }
-            else {
-                /* no, then only update relative time */
-                $("#" + result.id_str + " .when").html(get_relative_time(result.created_at));
-            }
+        /* update relative times */
+        $.each(results, function (i) {
+            $("#" + results[i].id_str + " .when").html(get_relative_time(results[i].created_at));
         });
+
+        /* no existing tweets */
+        var new_results = _.filter(results, function(result) { 
+            return $.inArray(result.id_str, tweet_ids) == -1;
+        });
+        /* put new tweets in the dom */
+        var output = "";
+        $.each(new_results, function(i) {
+            output += format_tweet(new_results[i], options);
+        });
+        $(options.feed_selector).prepend(output);
+
         if( !query.results ) {
             console.log("No response from Twitter.");
         }
@@ -42,7 +46,7 @@ function get_relative_time(time_str) {
     return when.fromNow();
 }
 
-function append_tweet(result, options) {
+function format_tweet(result, options) {
     var rel_when = get_relative_time(result.created_at);
 
     /* HTML template data */
@@ -67,8 +71,7 @@ function append_tweet(result, options) {
            </div> \
        </div>';
     var output = _.template(template, data);
-
-    $(options.feed_selector).append(output);
+    return output;
 }
 function update_clock(options) {
     var time = moment().format(options.format);
@@ -118,7 +121,7 @@ function highlight_term( text, term ) {
 $(document).ready(function(){
     /* Define options */
     var options = {
-        search_term: '#dnsgf',
+        search_term: '#studio2012',
         search_term_selector: '#search-term',
         feed_selector: '#twitter_feed',
         poll_interval: 10,
@@ -134,4 +137,15 @@ $(document).ready(function(){
     /* Start updating stuff */
     poll_twitter(options);
     update_clock(clock_options);
+    /* appropriate overflow */
+    $(window).resize();
+});
+
+/* No scollbar in fullscreen */
+$(window).resize(function() {
+    if((window.fullScreen) || (window.innerWidth == screen.width && window.innerHeight == screen.height)) {
+        $("html").css("overflow", "hidden");
+    } else {
+        $("html").css("overflow", "auto");
+    }
 });
