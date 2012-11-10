@@ -85,7 +85,7 @@ function update_clock(options) {
 function poll_twitter(options) {
     search_twitter(options); 
 
-    window.setTimeout(function() {
+    twitter_timout = window.setTimeout(function() {
         poll_twitter(options)
     }, options.poll_interval * 1000); // every poll_interval seconds
 }
@@ -117,8 +117,35 @@ function highlight_term( text, term ) {
     }
     return text;
 }
+function update_search_term(event) {
+    var value = $("#search-term-field").val();
+    var old_value = $("#search-term").html();
+    if(value == old_value) {
+        /* Do nothing */
+        $("#myModal").modal('toggle');
+        return;
+    }
+
+    /* Remove old tweets */
+    $(".tweet").remove();
+
+    /* Stop polling the old search term */
+    window.clearTimeout(twitter_timout);
+    /* Update the new */
+    $("#search-term").html(value);
+    $("#myModal").modal('toggle');
+    /* Start polling the new search term */
+    var options = {
+        search_term: value,
+        search_term_selector: '#search-term',
+        feed_selector: '#twitter_feed',
+        poll_interval: 10,
+    };
+    poll_twitter(options);
+}
 
 $(document).ready(function(){
+    var twitter_timeout = -1;
     /* Define options */
     var options = {
         search_term: 'Charlie Sheen',
@@ -139,6 +166,19 @@ $(document).ready(function(){
     update_clock(clock_options);
     /* appropriate overflow */
     $(window).resize();
+
+    /* Add listener to search button click to update search term */
+    $("#search-term-button").click(update_search_term);
+    /* Enter key*/
+    $("#search-term-field").keyup(function(event){
+        /* Enter key */
+        if(event.keyCode == 13) {
+            $("#search-term-button").click();
+        }
+    });
+    /* Set initial input field value */
+    $("#search-term-field").val(options.search_term);
+
 });
 
 /* No scollbar in fullscreen */

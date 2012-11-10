@@ -12,11 +12,25 @@
     <![endif]-->
 </head>
 <body>
+    <!-- Modal -->
+    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Update Search Term</h3>
+        </div>
+        <div class="modal-body">
+            <input id="search-term-field" type="text" />
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <button id="search-term-button" class="btn btn-primary">Update search term</button>
+        </div>
+    </div>
     <header id="header" class="container-fluid">
         <!-- twitter-icon,  hashtag, clock -->
         <div class="row-fluid">
             <div class="span10">
-                 <img src="css/dark/images/twitter.png" /> <span id="search-term"></span>
+                 <img src="css/dark/images/twitter.png" /> <a id="search-term" href="#myModal" data-toggle="modal"></a>
             </div>
             <div class="span2">
                 <div id="clock">15.30</div>
@@ -34,6 +48,7 @@
 
     <script type="text/javascript" src="js/jquery-1.7.2.js"></script>
     <script type="text/javascript" src="js/bootstrap-collapse.js"></script>
+    <script type="text/javascript" src="js/bootstrap-modal.js"></script>
     <script type="text/javascript" src="js/moment.js"></script>
     <script type="text/javascript" src="js/lang/nb.js"></script>
     <script type="text/javascript" src="js/underscore.js"></script>

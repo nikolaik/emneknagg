@@ -19,6 +19,15 @@ body {
     @include single-text-shadow(#000, 1px, 1px, 0);
     background-color: #222222;
 
+    #myModal {
+        line-height: 1em;
+
+        #myModalLabel {
+            color: #333;
+            @include single-text-shadow(none);
+        }
+    }
+
     #header {
         font-weight: 700;
         padding-bottom: 15px;
@@ -27,6 +36,8 @@ body {
         line-height: 1em;
 
         #search-term {
+            color: #fff;
+            text-decoration: none;
         }
         #clock {
             text-align: right;
