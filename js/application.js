@@ -154,7 +154,7 @@ $(document).ready(function(){
         poll_interval: 10,
     };
     var clock_options = {
-        format: "HH:mm:ss",
+        format: "HH:mm",
         clock_selector: "#clock",
     };
 
