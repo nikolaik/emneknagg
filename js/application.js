@@ -179,6 +179,11 @@ $(document).ready(function(){
     /* Set initial input field value */
     $("#search-term-field").val(options.search_term);
 
+    /* Set field focus on modal open */
+    $('#myModal').on('shown', function () {
+        $('#search-term-field').focus();
+    });
+
 });
 
 /* No scollbar in fullscreen */
