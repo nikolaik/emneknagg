@@ -1,5 +1,5 @@
 function search_twitter(options) {
-    var search = 'http://search.twitter.com/search.json?q=' + escape(options.search_term) + '&result_type=recent&callback=?';
+    var search = 'https://search.twitter.com/search.json?q=' + escape(options.search_term) + '&result_type=recent&callback=?';
     /* Twitter search */
     /* TODO 
      *  - linkify hashtags and @usernames
