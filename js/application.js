@@ -143,12 +143,20 @@ function update_search_term(event) {
     };
     poll_twitter(options);
 }
+function getURLParameter(name) {
+    var uri = (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+    if(uri === null) {
+        return false;
+    }
+    return decodeURIComponent(uri);
+}
 
 $(document).ready(function(){
     var twitter_timeout = -1;
     /* Define options */
+    console.log(getURLParameter('q'));
     var options = {
-        search_term: 'Charlie Sheen',
+        search_term: getURLParameter('q') || 'Charlie Sheen',
         search_term_selector: '#search-term',
         feed_selector: '#twitter_feed',
         poll_interval: 10,
@@ -178,6 +186,11 @@ $(document).ready(function(){
     });
     /* Set initial input field value */
     $("#search-term-field").val(options.search_term);
+
+    /* Set field focus on modal open */
+    $('#myModal').on('shown', function () {
+        $('#search-term-field').focus();
+    });
 
 });
 
