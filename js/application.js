@@ -1,6 +1,6 @@
 function search_twitter(options) {
     //var search = 'http://search.twitter.com/search.json?q=' + escape(options.search_term) + '&result_type=recent&callback=?';
-    var search = 'http://macgyver.neuf.no:8000/search/?q=' + escape(options.search_term);
+    var search = 'http://emneknagg.neuf.no/search/?q=' + escape(options.search_term);
     /* Twitter search */
     /* TODO 
      *  - linkify hashtags and @usernames
