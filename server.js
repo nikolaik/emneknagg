@@ -5,7 +5,7 @@
 var twitter_consumer_key = 'jQdzAQuDezn8jyQDtSYAcA';
 var twitter_consumer_secret = 'lueF7nru9iY77mu5ozp7c8WTmiuKkDAhJXT2UUPn4';
 var twitter_api_search_url = 'https://api.twitter.com/1.1/search/tweets.json?q=';
-var default_search_term = "Charlie%20Sheen";
+var default_search_term = "%23dnsgf";
 
 /* Init */
 var OAuth2 = require('oauth').OAuth2;
@@ -19,11 +19,9 @@ var oauth2 = new OAuth2(
 var request = require('request'),
     http = require('http'),
     express = require('express'),
-    redis = require('redis'),
     util = require('util'),
     url = require('url');
 
-var db = redis.createClient();
 var app = express();
 app.enable('trust proxy')
 
@@ -61,6 +59,7 @@ app.get('/search', function(req, res){
   }
 
   res.setHeader('Content-Type', "application/json");
+  res.setHeader('Access-Control-Allow-Origin', "*");
   get_token_and_search(res, query);
 });
 
