@@ -1,13 +1,26 @@
+var refresh_url;
+
 function search_twitter(options) {
-    //var search = 'http://search.twitter.com/search.json?q=' + escape(options.search_term) + '&result_type=recent&callback=?';
-    var search = 'http://emneknagg.neuf.no/search/?q=' + escape(options.search_term);
     /* Twitter search */
     /* TODO 
      *  - linkify hashtags and @usernames
      */
+    var relay_url = 'http://emneknagg.neuf.no/search/'
+    var search = relay_url + '?q=' + escape(options.search_term) + '&include_entities=1&result_type=recent';
+    if(refresh_url) {
+        search = relay_url + refresh_url;
+    }
 
     $.getJSON(search, function(query) {
         console.log(query);
+        if( !query.statuses ) {
+            console.log("No response from Twitter.");
+            return;
+        }
+
+        /* set refresh_url for next search */
+        refresh_url = query.search_metadata.refresh_url;
+
         var results = query.statuses;
 
         var tweets = $(".tweet");
@@ -32,9 +45,6 @@ function search_twitter(options) {
         });
         $(options.feed_selector).prepend(output);
 
-        if( !query.results ) {
-            console.log("No response from Twitter.");
-        }
     });
 
 }
@@ -61,7 +71,6 @@ function format_tweet(result, options) {
         tweet_url: 'https://twitter.com/' + result.from_user + '/status/' + result.id_str,
         profile_pic_url: result.user.profile_image_url.replace("normal", "bigger")
     };
-    // replace normal with bigger
 
     /* Format tweet */
     var template = '<div id="<%= result.id_str %>" class="tweet row-fluid"> \
@@ -132,11 +141,14 @@ function update_search_term(event) {
     /* Remove old tweets */
     $(".tweet").remove();
 
+    refresh_url = null;
+
     /* Stop polling the old search term */
     window.clearTimeout(twitter_timout);
     /* Update the new */
     $("#search-term").html(value);
     $("#myModal").modal('toggle');
+    
     /* Start polling the new search term */
     var options = {
         search_term: value,
@@ -157,7 +169,6 @@ function getURLParameter(name) {
 $(document).ready(function(){
     var twitter_timeout = -1;
     /* Define options */
-    console.log(getURLParameter('q'));
     var options = {
         search_term: getURLParameter('q') || '#dnsgf',
         search_term_selector: '#search-term',
