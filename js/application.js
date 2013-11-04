@@ -1,12 +1,14 @@
 function search_twitter(options) {
-    var search = 'http://search.twitter.com/search.json?q=' + escape(options.search_term) + '&result_type=recent&callback=?';
+    //var search = 'http://search.twitter.com/search.json?q=' + escape(options.search_term) + '&result_type=recent&callback=?';
+    var search = 'http://macgyver.neuf.no:8000/search/?q=' + escape(options.search_term);
     /* Twitter search */
     /* TODO 
      *  - linkify hashtags and @usernames
      */
 
     $.getJSON(search, function(query) {
-        var results = query.results;
+        console.log(query);
+        var results = query.statuses;
 
         var tweets = $(".tweet");
         var tweet_ids = Array();
@@ -40,7 +42,7 @@ function get_relative_time(time_str) {
     /* relative tweet time */
     var time = time_str.slice(4) // without weekday
     moment.lang('en'); // parse english month name
-    var when = moment(time, "DD MMM YYYY HH:mm:ss Z");
+    var when = moment(time, "MMM DD HH:mm:ss Z YYYY");
     moment.lang('nb'); // format in norwegian locale
 
     return when.fromNow();
@@ -57,8 +59,9 @@ function format_tweet(result, options) {
         retweet_url: 'http://twitter.com/intent/retweet?tweet_id=' + result.id_str,
         reply_url: 'http://twitter.com/intent/tweet?in_reply_to=' + result.id_str,
         tweet_url: 'https://twitter.com/' + result.from_user + '/status/' + result.id_str,
-        profile_pic_url: 'https://api.twitter.com/1/users/profile_image?screen_name=' + result.from_user + '&size=bigger',
+        profile_pic_url: result.user.profile_image_url.replace("normal", "bigger")
     };
+    // replace normal with bigger
 
     /* Format tweet */
     var template = '<div id="<%= result.id_str %>" class="tweet row-fluid"> \
@@ -66,7 +69,7 @@ function format_tweet(result, options) {
                <img src="<%= profile_pic_url %>" /> \
            </div> \
            <div class="span11"> \
-               <span class="screen_name"><a href="http://twitter.com/<%= result.from_user %>"><%= result.from_user %></a></span> <span class="text"><%= text %></span><br /> \
+               <span class="screen_name"><a href="http://twitter.com/<%= result.user.screen_name %>"><%= result.user.screen_name %></a></span> <span class="text"><%= text %></span><br /> \
                <a href="<%= tweet_url %>"><span class="when"><%= rel_when %></span></a><span class="links" style="display:none;"> &bull; <a href="<%= reply_url %>">svar</a> &bull; <a href="<%= retweet_url %>">retweet</a></span> \
            </div> \
        </div>';
@@ -156,7 +159,7 @@ $(document).ready(function(){
     /* Define options */
     console.log(getURLParameter('q'));
     var options = {
-        search_term: getURLParameter('q') || 'Charlie Sheen',
+        search_term: getURLParameter('q') || '#dnsgf',
         search_term_selector: '#search-term',
         feed_selector: '#twitter_feed',
         poll_interval: 10,
