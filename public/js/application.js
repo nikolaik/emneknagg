@@ -1,14 +1,10 @@
-var refresh_url;
+var _refresh_url;
 
 function search_twitter(options) {
-    /* Twitter search */
-    /* TODO 
-     *  - linkify hashtags and @usernames
-     */
-    var relay_url = 'http://emneknagg.neuf.no/search/'
+    var relay_url = 'http://emneknagg.neuf.no/search/';
     var search = relay_url + '?q=' + escape(options.search_term) + '&include_entities=1&result_type=recent';
-    if(refresh_url) {
-        search = relay_url + refresh_url;
+    if(_refresh_url) {
+        search = relay_url + _refresh_url;
     }
 
     $.getJSON(search, function(query) {
@@ -19,7 +15,7 @@ function search_twitter(options) {
         }
 
         /* set refresh_url for next search */
-        refresh_url = query.search_metadata.refresh_url;
+        _refresh_url = query.search_metadata.refresh_url;
 
         var results = query.statuses;
 
@@ -50,7 +46,7 @@ function search_twitter(options) {
 }
 function get_relative_time(time_str) {
     /* relative tweet time */
-    var time = time_str.slice(4) // without weekday
+    var time = time_str.slice(4); // without weekday
     moment.lang('en'); // parse english month name
     var when = moment(time, "MMM DD HH:mm:ss Z YYYY");
     moment.lang('nb'); // format in norwegian locale
@@ -59,13 +55,11 @@ function get_relative_time(time_str) {
 }
 
 function format_tweet(result, options) {
-    var rel_when = get_relative_time(result.created_at);
-
     /* HTML template data */
     var data = {
         result: result,
         text: format_text(result.text, options.search_term),
-        rel_when: rel_when,
+        rel_when: get_relative_time(result.created_at),
         retweet_url: 'http://twitter.com/intent/retweet?tweet_id=' + result.id_str,
         reply_url: 'http://twitter.com/intent/tweet?in_reply_to=' + result.id_str,
         tweet_url: 'https://twitter.com/' + result.from_user + '/status/' + result.id_str,
@@ -73,15 +67,16 @@ function format_tweet(result, options) {
     };
 
     /* Format tweet */
-    var template = '<div id="<%= result.id_str %>" class="tweet row-fluid"> \
-           <div class="span1"> \
-               <img src="<%= profile_pic_url %>" /> \
-           </div> \
-           <div class="span11"> \
-               <span class="screen_name"><a href="http://twitter.com/<%= result.user.screen_name %>"><%= result.user.screen_name %></a></span> <span class="text"><%= text %></span><br /> \
-               <a href="<%= tweet_url %>"><span class="when"><%= rel_when %></span></a><span class="links" style="display:none;"> &bull; <a href="<%= reply_url %>">svar</a> &bull; <a href="<%= retweet_url %>">retweet</a></span> \
-           </div> \
-       </div>';
+    var template = '';
+        template += '<div id="<%= result.id_str %>" class="tweet row-fluid">';
+        template += '  <div class="span1">';
+        template += '       <img src="<%= profile_pic_url %>" />';
+        template += '   </div>';
+        template += '   <div class="span11">';
+        template += '       <span class="screen_name"><a href="http://twitter.com/<%= result.user.screen_name %>"><%= result.user.screen_name %></a></span> <span class="text"><%= text %></span><br />';
+        template += '       <a href="<%= tweet_url %>"><span class="when"><%= rel_when %></span></a><span class="links" style="display:none;"> &bull; <a href="<%= reply_url %>">svar</a> &bull; <a href="<%= retweet_url %>">retweet</a></span>';
+        template += '   </div>';
+       template += '</div>';
     var output = _.template(template, data);
     return output;
 }
@@ -98,7 +93,7 @@ function poll_twitter(options) {
     search_twitter(options); 
 
     twitter_timout = window.setTimeout(function() {
-        poll_twitter(options)
+        poll_twitter(options);
     }, options.poll_interval * 1000); // every poll_interval seconds
 }
 
@@ -141,12 +136,16 @@ function update_search_term(event) {
     /* Remove old tweets */
     $(".tweet").remove();
 
-    refresh_url = null;
+    _refresh_url = null;
 
     /* Stop polling the old search term */
     window.clearTimeout(twitter_timout);
-    /* Update the new */
+    /* ...update the new */
     $("#search-term").html(value);
+    document.title = "Emneknagg: " + value;
+    /* Update address bar */
+    history.pushState(null, "Realtime Twitter" + value, "http://" + location.host + "/?q=" + value);
+    /* Close modal */
     $("#myModal").modal('toggle');
     
     /* Start polling the new search term */
@@ -159,7 +158,7 @@ function update_search_term(event) {
     poll_twitter(options);
 }
 function getURLParameter(name) {
-    var uri = (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+    var uri = (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1];
     if(uri === null) {
         return false;
     }
@@ -173,8 +172,12 @@ $(document).ready(function(){
         search_term: getURLParameter('q') || '#dnsgf',
         search_term_selector: '#search-term',
         feed_selector: '#twitter_feed',
-        poll_interval: 10,
+        poll_interval: 10, 
+        // (15 minute window * 60 seconds ) / 180 allowed requests per window = avg 1 request every 5 seconds
+        // Ref: https://dev.twitter.com/docs/rate-limiting/1.1
+        // TODO replace with streaming API
     };
+    options.title = "Emneknagg";
     var clock_options = {
         format: "HH:mm",
         clock_selector: "#clock",
@@ -182,6 +185,7 @@ $(document).ready(function(){
 
     /* Update the title */
     $(options.search_term_selector).html(options.search_term);
+    document.title = options.title + ": " + options.search_term;
 
     /* Start updating stuff */
     poll_twitter(options);
