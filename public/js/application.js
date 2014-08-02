@@ -20,7 +20,7 @@ function search_twitter(options) {
         var results = query.statuses;
 
         var tweets = $(".tweet");
-        var tweet_ids = Array();
+        var tweet_ids = [];
         for(var i=0; i<tweets.length; i++) {
             tweet_ids.push(tweets[i].id);
         }
@@ -62,7 +62,7 @@ function format_tweet(result, options) {
         rel_when: get_relative_time(result.created_at),
         retweet_url: 'http://twitter.com/intent/retweet?tweet_id=' + result.id_str,
         reply_url: 'http://twitter.com/intent/tweet?in_reply_to=' + result.id_str,
-        tweet_url: 'https://twitter.com/' + result.from_user + '/status/' + result.id_str,
+        tweet_url: 'https://twitter.com/' + result.user.screen_name + '/status/' + result.id_str,
         profile_pic_url: result.user.profile_image_url.replace("normal", "bigger")
     };
 
