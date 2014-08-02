@@ -2,16 +2,13 @@
  * strip xss-stuff from q
  * relay search to twitter api
  * respond with twitter body */
-var twitter_consumer_key = 'jQdzAQuDezn8jyQDtSYAcA';
-var twitter_consumer_secret = 'lueF7nru9iY77mu5ozp7c8WTmiuKkDAhJXT2UUPn4';
-var twitter_api_search_url = 'https://api.twitter.com/1.1/search/tweets.json';
-var default_search_term = "%23dnsgf";
+var settings = require('./config');
 
 /* Init */
 var OAuth2 = require('oauth').OAuth2;
 var oauth2 = new OAuth2(
-    twitter_consumer_key,
-    twitter_consumer_secret, 
+    settings.TWITTER_CONSUMER_KEY,
+    settings.TWITTER_CONSUMER_SECRET,
     'https://api.twitter.com/', 
     null,
     'oauth2/token', 
@@ -25,7 +22,7 @@ var request = require('request'),
 var app = express();
 /* Express config */
 app.use(express.static(__dirname + '/public'));
-app.enable('trust proxy')
+app.enable('trust proxy');
 
 var get_token_and_search = function(res, search_url) {
     /* Get access token */
@@ -48,15 +45,14 @@ var get_token_and_search = function(res, search_url) {
             );
         }
     );
-}
+};
 
-app.get('/', function(req, res){
-});
+app.get('/', function(req, res){});
 app.get('/search', function(req, res){
-  var search_url = twitter_api_search_url + "?q=" + default_search_term;
+  var search_url = settings.TWITTER_API_SEARCH_URL + "?q=" + settings.DEFAULT_SEARCH_TERM;
 
   if('q' in req.query) {
-      search_url = twitter_api_search_url + req.url.replace("/search/","").replace("/","");
+      search_url = settings.TWITTER_API_SEARCH_URL + req.url.replace("/search/","").replace("/","");
       util.log(util.inspect(req.query));
   }
 
