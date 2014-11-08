@@ -48,6 +48,13 @@ var get_token_and_search = function(res, search_url) {
 };
 
 app.get('/', function(req, res){});
+app.get('/time', function(req, res){
+  res.setHeader('Content-Type', "application/json");
+  res.setHeader('Access-Control-Allow-Origin', "*");
+  // ISO-8601 and the format is: YYYY-MM-DDTHH:mm:ss.sssZ
+  var now_str = new Date().toISOString();
+  res.send({now: now_str});
+});
 app.get('/search', function(req, res){
   var search_url = settings.TWITTER_API_SEARCH_URL + "?q=" + settings.DEFAULT_SEARCH_TERM;
 

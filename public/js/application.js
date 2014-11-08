@@ -1,16 +1,21 @@
 var _refresh_url;
+var _server_time_start;
+var _server_offset;
+//var relay_url = 'http://emneknagg.neuf.no/search/';
+var relay_url = 'http://localhost:3000/search/';
+//var time_sync_url = 'http://localhost:3000/time/';
+var time_sync_url = 'http://emneknagg.neuf.no/time/';
 
 function search_twitter(options) {
-    var relay_url = 'http://emneknagg.neuf.no/search/';
     var search = relay_url + '?q=' + escape(options.search_term) + '&include_entities=1&result_type=recent';
     if(_refresh_url) {
         search = relay_url + _refresh_url;
     }
 
     $.getJSON(search, function(query) {
-        console.log(query);
+        //console.log(query);
         if( !query.statuses ) {
-            console.log("No response from Twitter.");
+            //console.log("No response from Twitter.");
             return;
         }
 
@@ -25,11 +30,6 @@ function search_twitter(options) {
             tweet_ids.push(tweets[i].id);
         }
 
-        /* update relative times */
-        $.each(results, function (i) {
-            $("#" + results[i].id_str + " .when").html(get_relative_time(results[i].created_at));
-        });
-
         /* no existing tweets */
         var new_results = _.filter(results, function(result) { 
             return $.inArray(result.id_str, tweet_ids) == -1;
@@ -41,6 +41,12 @@ function search_twitter(options) {
         });
         $(options.feed_selector).prepend(output);
 
+        /* update relative times */
+        $('.tweet .when').each(function () {
+            var created_at = $(this).attr('data-created_at');
+            $(this).html(get_relative_time(created_at));
+        });
+
     });
 
 }
@@ -51,6 +57,9 @@ function get_relative_time(time_str) {
     var when = moment(time, "MMM DD HH:mm:ss Z YYYY");
     moment.lang('nb'); // format in norwegian locale
 
+    // TODO: diff with _server_offset
+    //var now = moment(_server_offset);
+    //return when.from(now);
     return when.fromNow();
 }
 
@@ -74,7 +83,7 @@ function format_tweet(result, options) {
         template += '   </div>';
         template += '   <div class="span11">';
         template += '       <span class="screen_name"><a href="http://twitter.com/<%= result.user.screen_name %>"><%= result.user.screen_name %></a></span> <span class="text"><%= text %></span><br />';
-        template += '       <a href="<%= tweet_url %>"><span class="when"><%= rel_when %></span></a><span class="links" style="display:none;"> &bull; <a href="<%= reply_url %>">svar</a> &bull; <a href="<%= retweet_url %>">retweet</a></span>';
+        template += '       <a href="<%= tweet_url %>"><span class="when" data-created_at="<%= result.created_at %>"><%= rel_when %></span></a><span class="links" style="display:none;"> &bull; <a href="<%= reply_url %>">svar</a> &bull; <a href="<%= retweet_url %>">retweet</a></span>';
         template += '   </div>';
        template += '</div>';
     var output = _.template(template, data);
@@ -187,12 +196,6 @@ $(document).ready(function(){
     $(options.search_term_selector).html(options.search_term);
     document.title = options.title + ": " + options.search_term;
 
-    /* Start updating stuff */
-    poll_twitter(options);
-    update_clock(clock_options);
-    /* appropriate overflow */
-    $(window).resize();
-
     /* Add listener to search button click to update search term */
     $("#search-term-button").click(update_search_term);
     /* Enter key*/
@@ -209,6 +212,18 @@ $(document).ready(function(){
     $('#myModal').on('shown', function () {
         $('#search-term-field').focus();
     });
+
+    /* Get server time */
+    $.get(time_sync_url, function(data){
+        _server_time_start = data.now;
+        _server_offset = moment(_server_time).diff(new Date());
+
+        /* Start updating stuff */
+        poll_twitter(options);
+        update_clock(clock_options);
+    });
+    /* appropriate overflow */
+    $(window).resize();
 
 });
 
