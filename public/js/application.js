@@ -2,8 +2,8 @@ var _refresh_url;
 var _server_time_start;
 var _server_offset = 0; // server vs client time offset (in case client computer can't tell time)
 var _twitter_timeout = -1; // callback id for twitter polling
-//var base_url = 'http://emneknagg.neuf.no';
-var base_url = 'http://localhost:3000';
+var base_url = 'http://emneknagg.neuf.no';
+//var base_url = 'http://localhost:3000';
 var relay_url = base_url + '/search/';
 var time_sync_url = base_url + '/time/';
 
