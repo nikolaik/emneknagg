@@ -1,10 +1,12 @@
 var _refresh_url;
 var _server_time_start;
-var _server_offset;
-//var relay_url = 'http://emneknagg.neuf.no/search/';
-var relay_url = 'http://localhost:3000/search/';
-//var time_sync_url = 'http://localhost:3000/time/';
-var time_sync_url = 'http://emneknagg.neuf.no/time/';
+var _server_offset = 0; // server vs client time offset (in case client computer can't tell time)
+var _twitter_timeout = -1; // callback id for twitter polling
+//var base_url = 'http://emneknagg.neuf.no';
+var base_url = 'http://localhost:3000';
+var relay_url = base_url + '/search/';
+var time_sync_url = base_url + '/time/';
+
 
 function search_twitter(options) {
     var search = relay_url + '?q=' + escape(options.search_term) + '&include_entities=1&result_type=recent';
@@ -58,9 +60,9 @@ function get_relative_time(time_str) {
     moment.lang('nb'); // format in norwegian locale
 
     // TODO: diff with _server_offset
-    //var now = moment(_server_offset);
-    //return when.from(now);
-    return when.fromNow();
+    var now = moment().diff(_server_offset);
+    return when.from(now);
+    //return when.fromNow();
 }
 
 function format_tweet(result, options) {
@@ -79,7 +81,7 @@ function format_tweet(result, options) {
     var template = '';
         template += '<div id="<%= result.id_str %>" class="tweet row-fluid">';
         template += '  <div class="span1">';
-        template += '       <img src="<%= profile_pic_url %>" />';
+        template += '       <a href="http://twitter.com/<%= result.user.screen_name %>"><img src="<%= profile_pic_url %>" /></a>';
         template += '   </div>';
         template += '   <div class="span11">';
         template += '       <span class="screen_name"><a href="http://twitter.com/<%= result.user.screen_name %>"><%= result.user.screen_name %></a></span> <span class="text"><%= text %></span><br />';
@@ -90,7 +92,8 @@ function format_tweet(result, options) {
     return output;
 }
 function update_clock(options) {
-    var time = moment().format(options.format);
+    var now = moment(moment().diff(_server_offset));
+    var time = now.format(options.format);
     $(options.clock_selector).html(time);
 
     window.setTimeout(function() {
@@ -101,7 +104,7 @@ function update_clock(options) {
 function poll_twitter(options) {
     search_twitter(options); 
 
-    twitter_timout = window.setTimeout(function() {
+    _twitter_timeout = window.setTimeout(function() {
         poll_twitter(options);
     }, options.poll_interval * 1000); // every poll_interval seconds
 }
@@ -148,7 +151,7 @@ function update_search_term(event) {
     _refresh_url = null;
 
     /* Stop polling the old search term */
-    window.clearTimeout(twitter_timout);
+    window.clearTimeout(_twitter_timeout);
     /* ...update the new */
     $("#search-term").html(value);
     document.title = "Emneknagg: " + value;
@@ -175,7 +178,6 @@ function getURLParameter(name) {
 }
 
 $(document).ready(function(){
-    var twitter_timeout = -1;
     /* Define options */
     var options = {
         search_term: getURLParameter('q') || '#dnsgf',
@@ -216,7 +218,7 @@ $(document).ready(function(){
     /* Get server time */
     $.get(time_sync_url, function(data){
         _server_time_start = data.now;
-        _server_offset = moment(_server_time).diff(new Date());
+        _server_offset = moment(_server_time_start).diff(new Date());
 
         /* Start updating stuff */
         poll_twitter(options);
