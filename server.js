@@ -68,6 +68,6 @@ app.get('/search', function(req, res){
   get_token_and_search(res, search_url);
 });
 
-util.log("http://localhost:3000");
-app.listen(3000);
+util.log("http://localhost:"+settings.PORT);
+app.listen(settings.PORT);
 
