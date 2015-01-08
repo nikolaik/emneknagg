@@ -2,10 +2,9 @@ var _refresh_url;
 var _server_time_start;
 var _server_offset = 0; // server vs client time offset (in case client computer can't tell time)
 var _twitter_timeout = -1; // callback id for twitter polling
-var base_url = 'http://emneknagg.neuf.no';
 //var base_url = 'http://localhost:3000';
-var relay_url = base_url + '/search/';
-var time_sync_url = base_url + '/time/';
+var relay_url = '/search/';
+var time_sync_url = '/time/';
 
 
 function search_twitter(options) {
@@ -74,7 +73,7 @@ function format_tweet(result, options) {
         retweet_url: 'http://twitter.com/intent/retweet?tweet_id=' + result.id_str,
         reply_url: 'http://twitter.com/intent/tweet?in_reply_to=' + result.id_str,
         tweet_url: 'https://twitter.com/' + result.user.screen_name + '/status/' + result.id_str,
-        profile_pic_url: result.user.profile_image_url.replace("normal", "bigger")
+        profile_pic_url: result.user.profile_image_url_https.replace("normal", "bigger")
     };
 
     /* Format tweet */
@@ -156,7 +155,7 @@ function update_search_term(event) {
     $("#search-term").html(value);
     document.title = "Emneknagg: " + value;
     /* Update address bar */
-    history.pushState(null, "Realtime Twitter" + value, "http://" + location.host + "/?q=" + value);
+    history.pushState(null, "Realtime Twitter" + value, "https://" + location.host + "/?q=" + value);
     /* Close modal */
     $("#myModal").modal('toggle');
     
