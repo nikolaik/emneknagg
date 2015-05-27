@@ -1,3 +1,5 @@
+/* global _, moment, history */
+
 var _refresh_url;
 var _server_time_start;
 var _server_offset = 0; // server vs client time offset (in case client computer can't tell time)
@@ -58,10 +60,8 @@ function get_relative_time(time_str) {
     var when = moment(time, "MMM DD HH:mm:ss Z YYYY");
     moment.lang('nb'); // format in norwegian locale
 
-    // TODO: diff with _server_offset
-    var now = moment().diff(_server_offset);
+    var now = moment().utc().diff(_server_offset);
     return when.from(now);
-    //return when.fromNow();
 }
 
 function format_tweet(result, options) {
@@ -91,7 +91,7 @@ function format_tweet(result, options) {
     return output;
 }
 function update_clock(options) {
-    var now = moment(moment().diff(_server_offset));
+    var now = moment(moment().utc().diff(_server_offset));
     var time = now.format(options.format);
     $(options.clock_selector).html(time);
 
@@ -116,10 +116,11 @@ function format_text( text, search_term) {
 
 /* Urlize */
 function urlize( text ) {
-    list = text.match( /\b(http:\/\/|www\.|http:\/\/www\.)[^ ]{2,100}\b/g );
-    if ( list ) {
-        for ( i = 0; i < list.length; i++ ) {
-            text = text.replace( list[i], "<a target='_blank' href='" + list[i] + "'>"+ list[i] + "</a>" );
+    var _list = text.match( /\b(http:\/\/|www\.|http:\/\/www\.)[^ ]{2,100}\b/g );
+    if ( _list ) {
+        var i;
+        for ( i = 0; i < _list.length; i++ ) {
+            text = text.replace( _list[i], "<a target='_blank' href='" + _list[i] + "'>"+ _list[i] + "</a>" );
         }
     }
     return text;
@@ -127,10 +128,11 @@ function urlize( text ) {
 
 function highlight_term( text, term ) {
     var re = new RegExp(term, "i");
-    list = re.exec(text);
-    if ( list ) {
-        for ( i = 0; i < list.length; i++ ) {
-            text = text.replace( list[i], '<span class="search-term-highlight">'+ list[i] + '</span>' );
+    var _list = re.exec(text);
+    if ( _list ) {
+        var i ;
+        for ( i = 0; i < _list.length; i++ ) {
+            text = text.replace( _list[i], '<span class="search-term-highlight">'+ _list[i] + '</span>' );
         }
     }
     return text;
