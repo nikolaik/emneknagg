@@ -1,0 +1,7 @@
+{
+  "generator-react-webpack": {
+    "appName": "emneknagg",
+    "style": "scss",
+    "postcss": true
+  }
+}

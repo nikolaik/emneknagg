@@ -1,0 +1,14 @@
+/* Base Application Styles */
+$bgcolor: #222;
+$tweet-bgcolor: #292929;
+
+body {
+  margin: 15px;
+  margin-top: 25px;
+  font-family: 'Open Sans',Arial,sans;
+  font-size: 70px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 1px 1px 0 #000000;
+  background: $bgcolor;
+}
